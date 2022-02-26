@@ -1,0 +1,88 @@
+    1  lab network-ingress start
+    2  oc login -u developer -p developer 
+    3  cat /usr/local/etc/ocp4.config 
+    4  source /usr/local/etc/ocp4.config
+    5  oc login -u developer -p developer $RHT_OCP4_MASTER_API
+    6  oc new-project network-ingress
+    7  oc project -q
+    8  cd DO280/labs/network-ingress/certs/
+    9  ls
+   10  cd ..
+   11  ll
+   12  vim todo-app-v1.yaml 
+   13  cat todo-app-v1.yaml | grep -i kind
+   14  oc create -f todo-app-v1.yaml
+   15  oc get pods -w 
+   16  oc get  pods
+   17  oc whoami
+   18  oc whoami --show-console 
+   19  oc project -q 
+   20  oc get pods
+   21  oc get svc 
+   22  oc get dc 
+   23  oc get deployment 
+   24  oc get is 
+   25  oc get  route 
+   26  oc expose service todo-http --hostname chandra01.apps.ocp4.example.com 
+   27  nslookup chandra01.apps.ocp4.example.com
+   28  cat /usr/local/etc/ocp4.config 
+   29  nslookup abc.apps.ocp4.example.com
+   30  nslookup mujeeb.apps.ocp4.example.com
+   31  nslookup anything.apps.ocp4.example.com
+   32  oc get route 
+   33  oc whoami --show-console 
+   34  firewall https://console-openshift-console.apps.ocp4.example.com & 
+   35  oc get  pods
+   36  oc scale --replicas=5 deployment/todo-http
+   37  ll
+   38   ip a | grep 172.25.250.9
+   39  sudo tcpdump -i eth0 -A -n port 80 | grep js
+   40  ll
+   41  sudo tcpdump -i eth0 -A -n port 80 | grep js
+   42  #oc create route edge --service=
+   43  oc get service 
+   44  #oc create route edge --service=todo-http --hostname 
+   45  oc get  route 
+   46  oc create route edge --service=todo-http --hostname todo-http-edge.apps.ocp4.example.com
+   47  oc create route edge --name todo-http-edge --service=todo-http --hostname todo-http-edge.apps.ocp4.example.com
+   48  oc create route edge todo-http-edge --service=todo-http --hostname todo-http-edge.apps.ocp4.example.com
+   49  oc get  route 
+   50  curl -k https://todo-http-edge.apps.ocp4.example.com
+   51  oc get  route 
+   52  ll
+   53  cd certs/
+   54  pwd
+   55  ll
+   56  cat openssl-commands.txt
+   57  ll
+   58   openssl genrsa -out training.key 2048
+   59  ls -lrth 
+   60   openssl req -new -subj "/C=IN/ST=Karnataka/L=Bangalore/O=Red Hat/CN=todo-https.apps.ocp4.example.com" -key training.key -out training.csr
+   61  ls -lrth 
+   62  cat training.key 
+   63  cat training.csr 
+   64  ls -lrth 
+   65  openssl x509 -req -in training.csr -passin file:passphrase.txt -CA training-CA.pem -CAkey training-CA.key -CAcreateserial -out training.crt -days 1825 -sha256 -extfile training.ext
+   66  ls -lrth 
+   67  # openssl genrsa -out training.key 2048
+   68  # openssl req -new -subj "/C=IN/ST=Karnataka/L=Bangalore/O=Red Hat/CN=todo-https.apps.ocp4.example.com" -key training.key -out training.csr
+   69  #openssl x509 -req -in training.csr -passin file:passphrase.txt -CA training-CA.pem -CAkey training-CA.key -CAcreateserial -out training.crt -days 1825 -sha256 -extfile training.ext
+   70  man openssl 
+   71  ls -lrth 
+   72  #oc create secret tls todo-certs 
+   73  cat ../todo-app-v2.yaml | grep todo-certs 
+   74  oc create secret tls todo-certs --cert training.crt --key training.key 
+   75  oc project -q 
+   76  oc get  secret 
+   77  cd ..
+   78  oc create -f todo-app-v2.yaml 
+   79  oc get  pods
+   80  oc get  svc 
+   81  oc get deployment 
+   82  oc get  route 
+   83  oc create route passthrough todo-https --service=todo-https --port 8443 --hostname todo-https.apps.ocp4.example.com
+   84  oc get route 
+   85  curl -k https://todo-https.apps.ocp4.example.com
+   86  curl -k https://todo-https.apps.ocp4.example.com |less
+   87  curl -k https://todo-https.apps.ocp4.example.com:8443 |less
+   88  oc get  route 
